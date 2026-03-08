@@ -3,57 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ana OS - Desktop</title>
+    <title>Ana OS - Sincronización Pro</title>
     <style>
-        :root { --win-blue: #002451; --accent: #d4af37; --win-bg: rgba(255, 255, 255, 0.1); }
+        :root { --win-blue: #002451; --accent: #d4af37; --term-green: #0f0; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; font-family: 'Segoe UI', sans-serif; color: white; }
 
-        /* --- FONDO ESCRITORIO --- */
+        /* --- ESCRITORIO --- */
         #desktop { 
             position: absolute; width: 100%; height: 100%; 
             background: url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=2000&auto=format&fit=crop') center/cover;
             z-index: 100; transition: opacity 1s;
         }
 
-        /* --- ICONOS A LA IZQUIERDA --- */
         .icon-column { position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column; gap: 15px; z-index: 1; }
         .icon { display: flex; flex-direction: column; align-items: center; width: 75px; text-align: center; cursor: pointer; padding: 5px; border-radius: 5px; }
         .icon:hover { background: rgba(255,255,255,0.15); }
         .icon-img { width: 45px; height: 45px; margin-bottom: 4px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
         .icon span { font-size: 10px; text-shadow: 1px 1px 2px #000; font-weight: 500; }
 
-        /* --- VENTANA BLOC DE NOTAS (PISTA) --- */
-        #hint-window {
-            position: absolute; top: 100px; left: 20px; width: 260px; background: #fff; color: #000;
-            border-radius: 5px; display: none; z-index: 120; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
+        /* --- VENTANAS --- */
+        #hint-window { position: absolute; top: 100px; left: 20px; width: 260px; background: #fff; color: #000; border-radius: 5px; display: none; z-index: 120; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .win-bar { background: #f0f0f0; padding: 5px 10px; display: flex; justify-content: space-between; font-size: 12px; border-radius: 5px 5px 0 0; border-bottom: 1px solid #ccc; font-weight: bold; }
         .win-content { padding: 15px; font-family: 'Consolas', monospace; font-size: 13px; line-height: 1.4; }
 
-        /* --- TERMINAL DE INICIO DE SESIÓN --- */
-        #terminal {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 90%; max-width: 500px; height: 380px; background: var(--win-blue); 
-            border: 1px solid #0056b3; box-sizing: border-box;
-            font-family: 'Consolas', 'Courier New', monospace; font-size: 13px;
-            color: #ccc; display: none; z-index: 150; box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-        }
+        #terminal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 500px; height: 400px; background: var(--win-blue); border: 1px solid #0056b3; box-sizing: border-box; font-family: 'Consolas', monospace; font-size: 12px; color: #ccc; display: none; z-index: 150; box-shadow: 0 20px 60px rgba(0,0,0,0.8); }
         .ps-header { background: #fff; color: #000; padding: 4px 10px; font-size: 11px; display: flex; justify-content: space-between; font-weight: bold; }
-        .ps-content { padding: 15px; height: 340px; overflow-y: hidden; }
-        .ps-prompt { color: #fff; font-weight: bold; }
+        .ps-content { padding: 15px; height: 360px; overflow-y: hidden; }
         #ps-input { background: transparent; border: none; color: #fff; font-family: inherit; font-size: 14px; width: 70%; outline: none; }
 
-        /* --- BARRA DE TAREAS --- */
-        #taskbar {
-            position: absolute; bottom: 0; width: 100%; height: 40px;
-            background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px);
-            display: flex; align-items: center; padding: 0 15px; box-sizing: border-box; z-index: 200;
-        }
+        #taskbar { position: absolute; bottom: 0; width: 100%; height: 40px; background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); display: flex; align-items: center; padding: 0 15px; box-sizing: border-box; z-index: 200; }
 
-        /* --- ESPACIO --- */
+        /* --- KARAOKE Y ESPACIO --- */
+        #lyrics-container { position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); width: 90%; text-align: center; z-index: 40; height: 80px; display: flex; align-items: center; justify-content: center; }
+        .lyric-line { font-family: 'Cinzel', serif; font-size: 1.5rem; color: #fff; text-shadow: 0 0 15px #fff; }
         #word-counter { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); color: var(--accent); font-size: 12px; font-weight: bold; z-index: 210; background: rgba(0,0,0,0.7); padding: 5px 15px; border-radius: 15px; display: none; border: 1px solid var(--accent); }
-        #lyrics-container { position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); width: 90%; text-align: center; z-index: 40; }
-        .lyric-line { font-family: 'Cinzel', serif; font-size: 1.5rem; color: #fff; text-shadow: 0 0 10px #fff; }
         #space-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; z-index: 1; }
         .love-word { font-family: 'Cinzel', serif; position: absolute; top: 40%; left: 50%; color: #fff; text-align: center; width: 85%; font-size: 1.6rem; text-shadow: 0 0 30px var(--accent); opacity: 0; transform: translate(-50%, -50%); pointer-events: none; z-index: 5; }
         .anim-word { animation: animMain 6.8s linear forwards; }
@@ -71,32 +54,21 @@
             <div class="icon" onclick="trollClick()"><img class="icon-img" src="https://cdn-icons-png.flaticon.com/512/716/716784.png"><span>Documentos</span></div>
             <div class="icon" onclick="trollClick()"><img class="icon-img" src="https://cdn-icons-png.flaticon.com/512/684/684050.png"><span>Maykel ❤️</span></div>
         </div>
-
         <div id="hint-window">
             <div class="win-bar"><span>pista.txt - Bloc de notas</span><span onclick="toggleHint()" style="cursor:pointer">×</span></div>
-            <div class="win-content">
-                <b>Recordatorio de Acceso:</b><br><br>
-                La clave debe ser en el siguiente formato incluyendo espacios:<br>
-                <i style="color: #555;">"01 de enero de 2000"</i>
-            </div>
+            <div class="win-content"><b>Recordatorio:</b><br><br>Formato de clave:<br>"01 de enero de 2000"</div>
         </div>
-
         <div id="terminal">
             <div class="ps-header"><span>Mecanismo de inicio de sesión</span><span onclick="closeTerminal()" style="cursor:pointer">×</span></div>
             <div class="ps-content" id="ps-log">
-                <div style="margin-bottom: 15px; color: #88aaee; font-weight: bold;">[ ANA OS - SECURE LAYER ]<br>Versión 3.0.1 - Cifrado Maykel-256</div>
+                <div style="margin-bottom: 10px; color: #88aaee; font-weight: bold;">[ ANA OS - SECURE LAYER ]<br>Versión 3.0.1 - Cifrado Maykel-256</div>
                 <div id="login-area">
-                    <span class="ps-prompt">Acceso de usuario:</span> 
-                    <input type="text" id="ps-input" placeholder="Ingrese clave..." autocomplete="off" autofocus>
-                    <div style="font-size: 11px; color: #88aaee; margin-top: 10px; font-style: italic;">Esperando entrada de datos...</div>
+                    <span style="font-weight:bold; color:#fff">Acceso de usuario:</span> 
+                    <input type="text" id="ps-input" placeholder="Ingrese clave..." autocomplete="off">
                 </div>
             </div>
         </div>
-
-        <div id="taskbar">
-            <img src="https://cdn-icons-png.flaticon.com/512/888/888882.png" style="width:20px; margin-right: 15px; opacity: 0.8;">
-            <span id="digital-clock" style="font-size: 12px; color: #fff;">11:36 PM</span>
-        </div>
+        <div id="taskbar"><span style="font-size: 12px; margin-left: auto; color: white; opacity: 0.8;">11:58 PM</span></div>
     </div>
 
     <div id="word-counter">0 / 30 MOMENTOS</div>
@@ -112,27 +84,19 @@
 
         function openTerminal() { term.style.display = 'block'; psInput.focus(); }
         function closeTerminal() { term.style.display = 'none'; }
-        function toggleHint() { 
-            const hint = document.getElementById('hint-window');
-            hint.style.display = hint.style.display === 'block' ? 'none' : 'block';
-        }
+        function toggleHint() { const h = document.getElementById('hint-window'); h.style.display = h.style.display === 'block' ? 'none' : 'block'; }
         function trollClick() { alert("Por aqui no es mi amor, sigue intentando"); }
 
-        psInput.addEventListener('keypress', function (e) {
+        psInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const input = psInput.value.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                 const target = CORRECT_KEY.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
                 if (input === target) {
                     document.getElementById('login-area').style.display = 'none';
                     audio.play();
                     runSequence();
                 } else {
-                    const error = document.createElement('div');
-                    error.style.color = '#ff6666';
-                    error.style.marginTop = '10px';
-                    error.innerHTML = "SYSTEM ERROR: Credenciales denegadas. Intente de nuevo.";
-                    psLog.appendChild(error);
+                    alert("Clave incorrecta");
                     psInput.value = '';
                 }
             }
@@ -140,48 +104,100 @@
 
         async function runSequence() {
             const lines = [
-                "Iniciando ANA_OS_KERNEL.bin...",
-                "Confirmando privilegios de Administradora...",
-                "Escaneando sectores de memoria: 15-09-2025",
-                "Cargando protocolo romántico 'YOU ARE THE REASON'",
-                "Buscando fragmentos de alma... [Encontrados: 30]",
-                "Sincronizando con el servidor MAYKEL_HEART",
-                "Preparando propulsores de distorsión galáctica",
-                "----------------------------------------------",
-                "MODO ESPACIAL: ACTIVADO",
-                "OXÍGENO: 100% | AMOR: 100% | RUMBO: INFINITO",
-                "T-MINUS 5", "T-MINUS 4", "T-MINUS 3", "T-MINUS 2", "T-MINUS 1",
-                "¡DESPEGUE CONFIRMADO!"
+                {t: "Iniciando ANA_OS_KERNEL.bin...", d: 500},
+                {t: "Verificando identidad de Administradora...", d: 500},
+                {t: "Accediendo a archivos del 15/09/2025...", d: 600},
+                {t: "Cargando protocolo 'YOU ARE THE REASON'...", d: 600},
+                {t: "ESCANEANDO SECTORES DE MEMORIA...", d: 400},
+                {t: "  - Momentos felices: 100%", d: 300},
+                {t: "  - Risas compartidas: 100%", d: 300},
+                {t: "  - Amor acumulado: [OVERFLOW DETECTED]", d: 800},
+                {t: "Iniciando protocolo de despegue estelar...", d: 600},
+                {t: "Calibrando motores de distorsión...", d: 600},
+                {t: "Buscando fragmentos de alma... [30 encontrados]", d: 600},
+                {t: "Sincronizando con servidor MAYKEL_HEART", d: 600},
+                {t: "Bypass de gravedad terrestre... EXITOSO", d: 600},
+                {t: "CONFIGURANDO ENTORNO ROMÁNTICO...", d: 700},
+                {t: "[####################] 100% SISTEMA LISTO", d: 900},
+                {t: "TODO LISTO PARA EL VIAJE AL INFINITO...", d: 700},
+                {t: "------------------------------------------", d: 200},
+                {t: "INICIANDO CUENTA REGRESIVA:", d: 400},
+                {t: ">> T-MINUS 5...", d: 1000},
+                {t: ">> T-MINUS 4...", d: 1000},
+                {t: ">> T-MINUS 3...", d: 1000},
+                {t: ">> T-MINUS 2...", d: 1000},
+                {t: ">> T-MINUS 1...", d: 1000},
+                {t: ">> ¡DESPEGUE CONFIRMADO!", d: 500}
             ];
-
             for (let line of lines) {
                 const div = document.createElement('div');
-                div.innerHTML = `<span style="color:#0f0">></span> ${line}`;
+                div.innerHTML = `<span style="color:var(--term-green)">></span> ${line.t}`;
                 psLog.appendChild(div);
-                await new Promise(r => setTimeout(r, 900));
+                psLog.scrollTop = psLog.scrollHeight;
+                await new Promise(r => setTimeout(r, line.d));
             }
-
-            document.getElementById('desktop').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('desktop').style.display = 'none';
-                document.getElementById('space-canvas').style.display = 'block';
-                document.getElementById('word-counter').style.display = 'block';
-                animationStarted = true;
-                initStars();
-                drawStars();
-                spawn();
-            }, 1000);
+            document.getElementById('desktop').style.display = 'none';
+            document.getElementById('space-canvas').style.display = 'block';
+            document.getElementById('word-counter').style.display = 'block';
+            animationStarted = true;
+            initStars(); drawStars(); spawn();
         }
 
-        // Karaoke y Estrellas (Inalterado)
-        const lyricsData = [ { start: 15.6, end: 20.0, text: "♪ Ahí va mi corazón latiendo ♪" }, { start: 20.6, end: 24.1, text: "♪ Porque tú eres la razón ♪" }, { start: 24.6, end: 28.1, text: "♪ Estoy perdiendo el sueño ♪" }, { start: 28.6, end: 33.1, text: "♪ Por favor vuelve ahora ♪" }, { start: 33.6, end: 37.1, text: "♪ Ahí va mi mente acelerada ♪" }, { start: 37.6, end: 41.1, text: "♪ Y tú eres la razón ♪" }, { start: 41.6, end: 46.1, text: "♪ Por la que aún sigo respirando ♪" }, { start: 46.6, end: 50.1, text: "♪ Estoy desesperado ahora ♪" }, { start: 50.6, end: 55.1, text: "♪ Escalaría cada montaña ♪" }, { start: 55.6, end: 59.1, text: "♪ Y nadaría cada océano ♪" }, { start: 59.6, end: 63.1, text: "♪ Solo para estar contigo ♪" }, { start: 63.6, end: 68.1, text: "♪ Y arreglar lo que he roto ♪" }, { start: 68.6, end: 73.1, text: "♪ Oh porque necesito que veas ♪" }, { start: 73.6, end: 81.0, text: "♪ Que tú eres la razón ♪" } ];
-        const letterPhrases = [ "FELIZ DÍA DE LA MUJER, MI ANA", "HOY CELEBRO TU EXISTENCIA", "ERES LA MUJER QUE CAMBIÓ MI VIDA", "ADMIRO TU FORTALEZA", "TU DULZURA ES MI REFUGIO", "ERES MI MEJOR DECISIÓN", "GRACIAS POR TU AMOR INFINITO", "MI PRINCESA, MI COMPAÑERA", "ERES EL CORAZÓN DE NUESTRO HOGAR", "TU SONRISA ILUMINA MI OSCURIDAD", "ERES VALIENTE Y CAPAZ", "NUNCA DEJES DE BRILLAR", "TE AMO POR QUIÉN ERES", "POR TODO LO QUE HEMOS CONSTRUIDO", "ERES MI PAZ EN LA TORMENTA", "MI MUNDO ES MEJOR SI ESTÁS TÚ", "ERES LA DUEÑA DE MIS SUSPIROS", "TU AMOR ES MI MOTOR DIARIO", "ANA, ERES SIMPLEMENTE ÚNICA", "MI BENDICIÓN MÁS GRANDE", "TE MERECES EL CIELO ENTERO", "CONTIGO EL TIEMPO NO IMPORTA", "ERES MI PERSONA FAVORITA", "MI AMOR POR TI NO TIENE FIN", "ORGULLOSO DE LA MUJER QUE ERES", "ERES MAGIA EN MI VIDA", "MI COMPLEMENTO PERFECTO", "SIEMPRE ESTARÉ PARA TI", "MAYKEL Y ANA POR SIEMPRE", "TE AMO CON TODA MI ALMA" ];
-        
-        let lastLine = -1; audio.ontimeupdate = () => { const time = audio.currentTime; const lineIndex = lyricsData.findIndex(l => time >= l.start && time <= l.end); if (lineIndex !== lastLine) { document.getElementById('lyrics-container').innerHTML = ''; if (lineIndex !== -1) { const line = document.createElement('div'); line.className = 'lyric-line'; line.innerText = lyricsData[lineIndex].text; document.getElementById('lyrics-container').appendChild(line); } lastLine = lineIndex; } };
-        let animationStarted = false, wordsSeen = 0, stars = []; const canvas = document.getElementById('space-canvas'), ctx = canvas.getContext('2d');
+        // --- KARAOKE CON TIEMPOS CORREGIDOS ---
+        const lyricsData = [
+            { start: 15.6, end: 20.0, text: "♪ Ahí va mi corazón latiendo ♪" },
+            { start: 20.6, end: 24.1, text: "♪ Porque tú eres la razón ♪" },
+            { start: 24.6, end: 28.1, text: "♪ Estoy perdiendo el sueño ♪" },
+            { start: 28.6, end: 33.1, text: "♪ Por favor vuelve ahora ♪" },
+            { start: 33.6, end: 37.1, text: "♪ Ahí va mi mente acelerada ♪" },
+            { start: 37.6, end: 41.1, text: "♪ Y tú eres la razón ♪" },
+            { start: 41.6, end: 46.1, text: "♪ Por la que aún sigo respirando ♪" },
+            { start: 46.6, end: 50.1, text: "♪ Estoy desesperado ahora ♪" },
+            { start: 50.6, end: 55.1, text: "♪ Escalaría cada montaña ♪" },
+            { start: 55.6, end: 59.1, text: "♪ Y nadaría cada océano ♪" },
+            { start: 59.6, end: 63.1, text: "♪ Solo para estar contigo ♪" },
+            { start: 63.6, end: 68.1, text: "♪ Y arreglar lo que he roto ♪" },
+            { start: 68.6, end: 73.1, text: "♪ Porque necesito que veas ♪" },
+            { start: 73.6, end: 81.0, text: "♪ Que tú eres la razón ♪" },
+            // --- SEGUNDA MITAD (CORRECCIÓN DE TIEMPOS) ---
+            { start: 82.5, end: 86.5, text: "♪ Ahí va mi mano temblando ♪" },
+            { start: 86.6, end: 90.0, text: "♪ Porque tú eres la razón ♪" },
+            { start: 90.1, end: 95.0, text: "♪ Mi corazón sigue sangrando ♪" },
+            { start: 95.1, end: 99.0, text: "♪ Te necesito ahora ♪" },
+            { start: 104.5, end: 109.0, text: "♪ Escalaría cada montaña ♪" },
+            { start: 109.1, end: 113.0, text: "♪ Nadaría cada océano ♪" },
+            { start: 113.1, end: 117.0, text: "♪ Solo para estar contigo ♪" },
+            { start: 117.1, end: 121.5, text: "♪ Y arreglar lo que he roto ♪" },
+            { start: 122.0, end: 126.5, text: "♪ Porque necesito que veas ♪" },
+            { start: 127.0, end: 132.0, text: "♪ Que tú eres la razón ♪" },
+            { start: 133.0, end: 140.0, text: "♪ Oh, eres la razón... ♪" },
+            { start: 142.0, end: 148.0, text: "♪ (You are the reason) ♪" },
+            { start: 150.0, end: 160.0, text: "♪ Te amo, Ana. Siempre serás tú. ♪" }
+        ];
+
+        let lastLine = -1;
+        audio.ontimeupdate = () => {
+            const time = audio.currentTime;
+            const lineIndex = lyricsData.findIndex(l => time >= l.start && time <= l.end);
+            if (lineIndex !== lastLine) {
+                const container = document.getElementById('lyrics-container');
+                container.innerHTML = '';
+                if (lineIndex !== -1) {
+                    const line = document.createElement('div');
+                    line.className = 'lyric-line';
+                    line.innerText = lyricsData[lineIndex].text;
+                    container.appendChild(line);
+                }
+                lastLine = lineIndex;
+            }
+        };
+
+        const letterPhrases = [ "FELIZ DÍA DE LA MUJER", "ERES MI TODO", "TE AMO ANA", "ERES VALIENTE", "MI COMPAÑERA", "MI MEJOR DECISIÓN", "GRACIAS POR EXISTIR", "ERES MI REFUGIO", "TE ADMIRO MUCHO", "MI PRINCESA", "ERES MI PAZ", "ERES MI MOTOR", "ANA Y MAYKEL", "SIEMPRE JUNTOS", "ERES MAGIA", "MI BENDICIÓN", "ERES ÚNICA", "TE MERECES EL CIELO", "MI PERSONA FAVORITA", "AMOR INFINITO", "NUNCA DEJES DE BRILLAR", "ERES MI MUNDO", "DUEÑA DE MI ALMA", "COMPLEMENTO PERFECTO", "SIEMPRE PARA TI", "MI FORTALEZA", "MI DULZURA", "ORGULLOSO DE TI", "TE AMO POR SIEMPRE", "ERES MI RAZÓN" ];
+        let animationStarted = false, wordsSeen = 0, stars = [];
+        const canvas = document.getElementById('space-canvas'), ctx = canvas.getContext('2d');
         function initStars() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; for (let i = 0; i < 150000; i++) { stars.push({ x: (Math.random() - 0.5) * canvas.width * 7, y: (Math.random() - 0.5) * canvas.height * 7, z: Math.random() * canvas.width, size: Math.random() * 0.4 + 0.1, opacity: Math.random() }); } }
         function drawStars() { ctx.fillStyle = "#000"; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.save(); ctx.translate(canvas.width / 2, canvas.height / 2); for (let s of stars) { s.z -= 0.8; if (s.z <= 0) s.z = canvas.width; let f = canvas.width / s.z; let x = s.x * f; let y = s.y * f; if (x > -canvas.width && x < canvas.width && y > -canvas.height && y < canvas.height) { ctx.beginPath(); ctx.arc(x, y, s.size * f * 0.3, 0, Math.PI * 2); ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`; ctx.fill(); } } ctx.restore(); requestAnimationFrame(drawStars); }
-        function spawn() { if (!animationStarted || wordsSeen >= 30) return; const el = document.createElement('div'); el.className = "love-word anim-word"; el.innerText = letterPhrases[wordsSeen]; document.body.appendChild(el); wordsSeen++; document.getElementById('word-counter').innerText = `${wordsSeen} / 30 MOMENTOS`; el.addEventListener('animationend', () => el.remove()); setTimeout(spawn, 5000); }
+        function spawn() { if (!animationStarted || wordsSeen >= 30) return; const el = document.createElement('div'); el.className = "love-word anim-word"; el.innerText = letterPhrases[wordsSeen]; document.body.appendChild(el); wordsSeen++; document.getElementById('word-counter').innerText = `${wordsSeen} / 30 MOMENTOS`; setTimeout(spawn, 5500); }
     </script>
 </body>
 </html>
